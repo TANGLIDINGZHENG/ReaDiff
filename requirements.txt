@@ -4,3 +4,4 @@ opencv-python==4.8.1.78
 decord==0.6.0
 einops==0.6.1
 safetensors==0.8.0
+scipy==1.15.3

@@ -23,13 +23,25 @@ python -m pip install -r requirements.txt
 
 ## Weights
 
-In GitHub Releases, download `ReaDiff-shared.safetensors` and the model file for the size you want. Place both in `weights/`. The shared file contains the TC-CLIP visual encoder, the RVQ motion decoder and the motion normalization statistics.
+Download the shared weights and a model size from [ReaDiff weights v1.1.0](https://github.com/TANGLIDINGZHENG/ReaDiff/releases/tag/v1.1.0). For benchmark runs, also download the frozen motion evaluator. Place the files in `weights/`.
 
-From a clone of this repository, the GitHub CLI can download and verify the two files for ReaDiff-S.
+| Use | Filename |
+| --- | --- |
+| S, M or L generator | `ReaDiff-weights-S.safetensors`, `ReaDiff-weights-M.safetensors` or `ReaDiff-weights-L.safetensors` |
+| All inference and evaluation | `ReaDiff-weights-shared.safetensors` |
+| ViMo metrics | `ReaDiff-weights-evaluator.safetensors` |
+
+To download and verify the files for ReaDiff-S evaluation, run these commands from a clone of the repository. Change `MODEL` to `M` or `L` for the other sizes.
 
 ```bash
+MODEL=S
 mkdir -p weights
-gh release download v1.0.0 -D weights -p 'ReaDiff-shared.safetensors' -p 'ReaDiff-S.safetensors'
+for part in "$MODEL" shared evaluator; do
+    file="ReaDiff-weights-${part}.safetensors"
+    if [ ! -f "weights/$file" ]; then
+        gh release download v1.1.0 -D weights -p "$file" || exit 1
+    fi
+done
 sha256sum --check --ignore-missing SHA256SUMS
 ```
 
@@ -45,6 +57,18 @@ Use `--model M` or `--model L` with its matching weight file. The output length 
 | --- | --- | --- |
 | `_joints.npy` | (frames, 22, 3) | XYZ joint positions in ViMo motion coordinates, with Y up |
 | `_motion.npy` | (frames, 263) | Denormalized per-frame motion features in the ViMo representation |
+
+## Evaluate on ViMo
+
+Download and extract the [official ViMo dataset](https://drive.google.com/file/d/182yLuEVtESIrVXshrJeNS8dbx6sxGB13/view?usp=sharing). Pass the directory containing `test.txt`, `videos/` and `vector_263/` to the evaluator.
+
+```bash
+python evaluate.py --model S --data-root /path/to/VIMO --device cuda:0 --output outputs/ReaDiff-S-metrics.json
+```
+
+The default run generates reactions from all 700 test videos for each of 20 sampling repeats. It reports FID, Diversity and Multimodality per repeat and writes their means and 95% confidence half-widths to JSON. Use `--repeats 1` for a single pass. `--workers` controls the number of parallel video decoding processes.
+
+The evaluation uses batches of 32 and the test order and motion crops listed in [the test manifest](configs/vimo-test-crops.csv). It starts the sampling and metric random streams at seed 10107 and advances them across repeats. For the first 96 videos, it generates 30 reactions each. The 30th contributes to FID and Diversity, and all 30 are available for the 10 sampled Multimodality pairs. Diversity uses 300 sampled pairs. The published reference uses CUDA. Floating-point and random-number implementations can vary across hardware and library versions.
 
 ## ViMo results
 
