@@ -1,0 +1,104 @@
+{
+  "model": "ReaDiff-S",
+  "architecture": {
+    "latent_dim": 512,
+    "ff_size": 1536,
+    "n_layers": 8,
+    "n_heads": 8
+  },
+  "sampling": {
+    "steps": 50,
+    "scale": 1.25,
+    "sampling": {
+      "sampler": "unipc",
+      "spacing": "trailing",
+      "eta": 0.0,
+      "guidance_min": 0.0,
+      "guidance_max": 1.0,
+      "time_power": 0.75,
+      "noise_temperature": 1.0,
+      "guidance_rescale": 0.0,
+      "apg_parallel": 0.25,
+      "apg_momentum": -0.5,
+      "apg_norm": 0.0,
+      "solver_order": 3,
+      "timestep_indices": [
+        999,
+        984,
+        969,
+        954,
+        938,
+        923,
+        908,
+        892,
+        876,
+        861,
+        845,
+        829,
+        813,
+        797,
+        781,
+        764,
+        748,
+        731,
+        715,
+        698,
+        681,
+        664,
+        646,
+        629,
+        611,
+        594,
+        576,
+        558,
+        539,
+        521,
+        502,
+        483,
+        464,
+        444,
+        424,
+        404,
+        384,
+        363,
+        342,
+        320,
+        298,
+        275,
+        252,
+        228,
+        203,
+        177,
+        149,
+        120,
+        88,
+        52
+      ]
+    },
+    "projection_strength": 0.0
+  },
+  "archive_size": "L",
+  "epoch": 190,
+  "source_checkpoint_sha256": "ddbb7a575d681ff92267c03bbd72f6e70ba19da24ac253c618d651ae827c679f",
+  "generator_parameters": 35297880,
+  "evaluation_seed": 10107,
+  "evaluation_repeats": 20,
+  "metrics": {
+    "fid": {
+      "mean": 0.3051087526590436,
+      "ci95": 0.012415698048808831
+    },
+    "diversity_real": {
+      "mean": 7.953890419006347,
+      "ci95": 0.07432972820095733
+    },
+    "diversity": {
+      "mean": 8.099878716468812,
+      "ci95": 0.08597463660627662
+    },
+    "multimodality": {
+      "mean": 2.5344480633735658,
+      "ci95": 0.06532047702479611
+    }
+  }
+}
